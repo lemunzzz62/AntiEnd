@@ -1,0 +1,6 @@
+name: AntiEnd
+version: '${version}'
+
+main: org.bl4nk.antiEnd.AntiEnd
+api-version: '26.3'
+load: POSTWORLD
