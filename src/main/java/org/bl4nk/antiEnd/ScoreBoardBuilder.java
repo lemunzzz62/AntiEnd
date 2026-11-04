@@ -25,7 +25,7 @@ public class ScoreBoardBuilder {
         Runtime runtime = Runtime.getRuntime();
 
         long maxMb = runtime.maxMemory() / 1024 / 1024;
-        long usedMb = runtime.totalMemory() - (runtime.freeMemory() / 1024 / 1024);
+        long usedMb = (runtime.totalMemory() - runtime.freeMemory()) / 1024 / 1024;
 
         TextColor color = TextColor.color(0x3fdf3f);
 
