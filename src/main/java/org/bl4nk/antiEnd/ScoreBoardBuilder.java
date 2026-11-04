@@ -22,8 +22,10 @@ public class ScoreBoardBuilder {
     static final String[] ARROWS = {"↑ ", "→ ", "↓ ", "← "};
 
     public static void updateTabFooter(Player player) {
-        long maxMb = Runtime.getRuntime().totalMemory() / 1024 / 1024;
-        long usedMb = maxMb - (Runtime.getRuntime().freeMemory() / 1024 / 1024);
+        Runtime runtime = Runtime.getRuntime();
+
+        long maxMb = runtime.maxMemory() / 1024 / 1024;
+        long usedMb = runtime.totalMemory() - (runtime.freeMemory() / 1024 / 1024);
 
         TextColor color = TextColor.color(0x3fdf3f);
 
