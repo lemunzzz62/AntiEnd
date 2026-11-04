@@ -3,6 +3,7 @@ package org.bl4nk.antiEnd.events;
 import fr.mrmicky.fastboard.adventure.FastBoard;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bl4nk.antiEnd.AntiEnd;
 import org.bukkit.entity.Player;
@@ -24,8 +25,6 @@ public class PlayerJoinListener implements Listener {
             attachment.setPermission("minecraft.command.whitelist", true);
             player.recalculatePermissions();
         }
-
-        player.sendPlayerListFooter(Component.text("Reno was here... ").color(NamedTextColor.DARK_GRAY).decorate(TextDecoration.ITALIC));
 
         if (!scoreboardNotShownTo.contains(player.getUniqueId())) {
             boards.put(player, new FastBoard(player));

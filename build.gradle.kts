@@ -19,8 +19,14 @@ java {
 }
 
 tasks {
+    // Only ship the shaded jar; the plain one lacks fastboard and would crash on load.
+    jar {
+        enabled = false
+    }
+
     shadowJar {
         relocate("fr.mrmicky.fastboard", "org.bl4nk.fastboard")
+        archiveFileName.set("AntiEnd.jar")
     }
 
     runServer {
@@ -33,6 +39,8 @@ tasks {
 
     processResources {
         val props = mapOf("version" to version)
+        // Track props as inputs so a version bump actually re-expands plugin.yml.
+        inputs.properties(props)
         filesMatching("plugin.yml") {
             expand(props)
         }

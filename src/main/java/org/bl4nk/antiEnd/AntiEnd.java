@@ -16,9 +16,9 @@ import org.bukkit.Location;
 import org.bukkit.Statistic;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scoreboard.Score;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -96,14 +96,6 @@ public final class AntiEnd extends JavaPlugin {
                 }
             } catch (IOException | IllegalArgumentException e) {
                 LOGGER.severe("Couldn't load IP visibilities: " + e.getMessage());
-            }        try {
-            for (String line : Files.readAllLines(scoreboardNotShownToFile())) {
-                if (!line.isBlank()) {
-                    scoreboardNotShownTo.add(UUID.fromString(line.trim()));
-                }
-            }
-            } catch (IOException e) {
-                LOGGER.severe("Couldn't load scoreboard visibilities: " + e.getMessage());
             }
         }
 
@@ -129,55 +121,14 @@ public final class AntiEnd extends JavaPlugin {
         PM.registerEvents(new PlayerJoinListener(), this);
         PM.registerEvents(new PlayerQuitListener(), this);
 
-        Bukkit.getScheduler().runTaskTimer(this, () -> {
-            for (FastBoard board : boards.values()) {
-                Player player = board.getPlayer();
+         Bukkit.getScheduler().runTaskTimer(this, () -> {
+             for (FastBoard board : boards.values()) {
+                 Player player = board.getPlayer();
 
-                int deaths = player.getStatistic(Statistic.DEATHS);
-                Waypoint waypoint = waypoints.get(player.getUniqueId());
-
-                String name = "None";
-                String loc = "";
-                TextColor color = TextColor.color(0x3fdf3f);
-
-
-                if (waypoint != null) {
-                    name = waypoint.name() + ": ";
-                    loc = waypoint.x() + " " + waypoint.y() + " " + waypoint.z();
-                    color = switch (waypoint.dimension()) {
-                        case NETHER -> TextColor.color(0xdf3f3f);
-                        case THE_END -> TextColor.color(0xdf3fdf);
-                        default -> TextColor.color(0x3fdf3f);
-                    };
-                }
-
-                String playtime = expandDuration(player.getStatistic(Statistic.TOTAL_WORLD_TIME));
-
-                board.updateLines(Component.text("☠ ").color(TextColor.color(0xdf3f3f))
-                                .append(Component.text("Deaths: ").color(NamedTextColor.WHITE)
-                                        .append(Component.text(deaths).color(TextColor.color(0xdf3f3f)))),
-
-                        Component.empty(),
-
-                        Component.text("♦ ").color(TextColor.color(0x3fdf3f))
-                                .append(Component.text(name).color(NamedTextColor.WHITE))
-                                .append(Component.text(loc).color(color)),
-
-                        Component.empty(),
-
-                        Component.text("⌛ ").color(TextColor.color(0x3fdfdf))
-                                .append(Component.text("Playtime: ").color(NamedTextColor.WHITE)
-                                .append(Component.text(playtime).color(TextColor.color(0x3fdfdf)))),
-
-                        Component.empty(),
-
-                        Component.text("\uD83D\uDD0C ").color(TextColor.color(0xdfdf3f))
-                                .append(Component.text("IP: ").color(NamedTextColor.WHITE))
-                                .append(Component.text(IpNotShownTo.contains(player.getUniqueId()) ? "**.***.**.***" : "99.244.22.138")).color(TextColor.color(0xdfdf3f)),
-
-                        Component.text(Bukkit.getCurrentTick() % 300 <= 50  && !IpNotShownTo.contains(player.getUniqueId())? "/toggleip: hides IP" : "").color(TextColor.color(0xdfdfdf)));
-            }
-        }, 0L, 5L);
+                 ScoreBoardBuilder.updateScoreboard(player, board);
+                 ScoreBoardBuilder.updateTabFooter(player);
+             }
+         }, 0L, 5L);
 
         this.registerCommand(
                 "setwaypoint",
