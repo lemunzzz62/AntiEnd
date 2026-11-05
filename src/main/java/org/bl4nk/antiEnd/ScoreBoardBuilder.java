@@ -4,7 +4,6 @@ import fr.mrmicky.fastboard.adventure.FastBoard;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Statistic;
@@ -24,19 +23,30 @@ public class ScoreBoardBuilder {
     public static void updateTabFooter(Player player) {
         Runtime runtime = Runtime.getRuntime();
 
+        int ping = player.getPing();
+
+        TextColor pingColor = TextColor.color(0x3fdf3f);
+
+        if (ping > 300) {
+            pingColor = TextColor.color(0xdf3f3f);
+        } else if (ping > 150) {
+            pingColor = TextColor.color(0xdfdf3f);
+        }
+
         long maxMb = runtime.maxMemory() / 1024 / 1024;
         long usedMb = (runtime.totalMemory() - runtime.freeMemory()) / 1024 / 1024;
 
-        TextColor color = TextColor.color(0x3fdf3f);
+        TextColor memColor = TextColor.color(0x3fdf3f);
 
         if (usedMb >= maxMb * 0.85) {
-            color = TextColor.color(0xdf3f3f);
+            memColor = TextColor.color(0xdf3f3f);
         } else if (usedMb >= maxMb * 0.65) {
-            color = TextColor.color(0xdfdf3f);
+            memColor = TextColor.color(0xdfdf3f);
         }
 
-        player.sendPlayerListFooter((Component.text("Memory: ").color(NamedTextColor.GRAY)
-                .append(Component.text(usedMb + "MB").color(color))
+        player.sendPlayerListFooter(Component.text(ping).color(pingColor)
+                .append(Component.text("ms  |  Memory: ").color(NamedTextColor.GRAY)
+                .append(Component.text(usedMb + "MB").color(memColor))
                 .append(Component.text("/").color(NamedTextColor.GRAY))
                 .append(Component.text(maxMb + "MB").color(TextColor.color(0x3fdf3f)))));
     }
